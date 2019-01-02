@@ -24,4 +24,49 @@
 
 
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Pen"
+        android:id="@+id/penButton"
+        android:onClick="setPen"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        />
+    <Spinner
+        android:id="@+id/sizeSpinner"
+        android:layout_width="wrap_content"
+        android:prompt="@string/size"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/penButton"
+        android:layout_toRightOf="@+id/penButton"/>
+
+    <Spinner
+        android:id="@+id/colorSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/sizeSpinner"
+        android:prompt="@string/clr"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Eraser"
+        android:onClick="setEraser"
+        android:layout_toRightOf="@+id/colorSpinner"
+        android:layout_marginRight="10dp"
+        />
+    </RelativeLayout>
+
 </FrameLayout>

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">PaintYourIdeas</string>
     <string name="clear">Clear</string>
+    <string name="size">Pen Size</string>
+    <string name="clr">Pen Color</string>
+    <string name="Pen">PEN</string>
+    <string name="Eraser">ERASER</string>
 </resources>

@@ -100,7 +100,12 @@ public class MyCanvasView extends View {
     }
 
 
-
+    public void setPenColor(int color){
+         mpaint.setColor(color);
+    }
+    public void setPenSize(float size){
+         mpaint.setStrokeWidth(size);
+    }
 
 
 }
