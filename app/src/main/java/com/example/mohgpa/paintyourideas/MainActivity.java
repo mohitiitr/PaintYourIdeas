@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentColor;
 
     String[] sizeNums={"1","2","3","4","5","6","7","8","9"};
-    String [] colorsRange={"Red","Orange","SkyBlue", "Black","LightGreen","DarkGreen","Yellow","Pink","DarkBlue"};
+    String [] colorsRange={ "Black","Red","Orange","SkyBlue","LightGreen","DarkGreen","Yellow","Pink","DarkBlue"};
 
 
     @Override
@@ -36,11 +36,10 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter penSizeAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeNums);
         penSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        ArrayAdapter penColorAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item, colorsRange);
-        penColorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
 
         sizeSpinnerPen.setAdapter(penSizeAdapter);
-        colorSpinner.setAdapter(penColorAdapter);
+        colorSpinner.setAdapter( new MyAdapter(MainActivity.this,R.layout.my_custom_layout,colorsRange));
 
         sizeSpinnerPen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -62,16 +61,16 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                        currentColor=(int)R.color.cl1;
+                        currentColor=(int)R.color.cl4;
                         break;
                     case 1:
-                        currentColor=(int)R.color.cl2;
+                        currentColor=(int)R.color.cl1;
                         break;
                     case 2:
-                        currentColor=(int)R.color.cl3;
+                        currentColor=(int)R.color.cl2;
                         break;
                     case 3:
-                        currentColor=(int)R.color.cl4;
+                        currentColor=(int)R.color.cl3;
                         break;
                     case 4:
                         currentColor=(int)R.color.cl6;

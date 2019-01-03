@@ -5,4 +5,5 @@
     <string name="clr">Pen Color</string>
     <string name="Pen">PEN</string>
     <string name="Eraser">ERASER</string>
+    <string name="tools">Tools</string>
 </resources>
