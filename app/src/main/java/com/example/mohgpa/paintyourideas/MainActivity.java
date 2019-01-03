@@ -6,9 +6,12 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import java.time.chrono.Era;
 
 public class MainActivity extends AppCompatActivity {
     Spinner sizeSpinnerPen;
@@ -24,15 +27,25 @@ public class MainActivity extends AppCompatActivity {
     private boolean isEraserPressed=false;
 
     private int countBackPressed=0;
-    private boolean isOptionsVisible=false;
+    private boolean isOptionsVisible=true;
+
 
     String[] sizeNums={"1","2","3","4","5","6","7","8","9"};
     String [] colorsRange={ "Black","Red","Orange","SkyBlue","LightGreen","DarkGreen","Yellow","Pink","DarkBlue"};
+
+
+    Button PenButton;
+    Button EraserButton;
+    Button ClearAllButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PenButton=(Button)findViewById(R.id.penButton);
+        EraserButton=(Button)findViewById(R.id.eraserButton);
+        ClearAllButton=(Button)findViewById(R.id.clearAll);
 
         final Toast toast=Toast.makeText(MainActivity.this,"Please select PEN Button before changing pen attributes \n:)",Toast.LENGTH_SHORT);
         final Toast toast2=Toast.makeText(MainActivity.this,"Please select ERASER Button before changing ERASER size \n:)",Toast.LENGTH_SHORT);
@@ -177,6 +190,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toolOptions(View view){
+        if (isOptionsVisible){
+            PenButton.setVisibility(View.GONE);
+            sizeSpinnerPen.setVisibility(View.GONE);
+            colorSpinner.setVisibility(View.GONE);
+            EraserButton.setVisibility(View.GONE);
+            eraserSpinner.setVisibility(View.GONE);
+            ClearAllButton.setVisibility(View.GONE);
+            isOptionsVisible=false;
+        }
+
+        else {
+            PenButton.setVisibility(View.VISIBLE);
+            sizeSpinnerPen.setVisibility(View.VISIBLE);
+            colorSpinner.setVisibility(View.VISIBLE);
+            EraserButton.setVisibility(View.VISIBLE);
+            eraserSpinner.setVisibility(View.VISIBLE);
+            ClearAllButton.setVisibility(View.VISIBLE);
+            isOptionsVisible=true;
+
+        }
 
     }
 }
