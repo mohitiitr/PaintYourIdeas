@@ -7,6 +7,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Switch;
 
 public class MainActivity extends AppCompatActivity {
     Spinner sizeSpinnerPen;
@@ -15,9 +16,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int penSize;
     private int eraserSize;
+    private int currentColor;
 
     String[] sizeNums={"1","2","3","4","5","6","7","8","9"};
-    String [] colorsRange={"Red","Orange","SkyBlue", "DarkBlue","Black","LightGreen","DarkGreen","Yellow","Pink"};
+    String [] colorsRange={"Red","Orange","SkyBlue", "Black","LightGreen","DarkGreen","Yellow","Pink","DarkBlue"};
 
 
     @Override
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         sizeSpinnerPen=(Spinner)findViewById(R.id.sizeSpinner);
         colorSpinner=(Spinner)findViewById(R.id.colorSpinner);
 
-        ArrayAdapter penSizeAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeNums);
+        final ArrayAdapter penSizeAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeNums);
         penSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         ArrayAdapter penColorAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item, colorsRange);
@@ -44,12 +46,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 penSize=position+1;
-                myCanvas.setPenSize((float)penSize);
+                myCanvas.setPenSize((float)penSize*3);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                penSize=4;
+                myCanvas.setPenSize(penSize);
             }
         });
 
@@ -57,12 +60,46 @@ public class MainActivity extends AppCompatActivity {
         colorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //nothing for now
+                switch (position){
+                    case 0:
+                        currentColor=(int)R.color.cl1;
+                        break;
+                    case 1:
+                        currentColor=(int)R.color.cl2;
+                        break;
+                    case 2:
+                        currentColor=(int)R.color.cl3;
+                        break;
+                    case 3:
+                        currentColor=(int)R.color.cl4;
+                        break;
+                    case 4:
+                        currentColor=(int)R.color.cl6;
+                        break;
+                    case 5:
+                        currentColor=(int)R.color.cl5;
+                        break;
+                    case 6:
+                        currentColor=(int)R.color.cl7;
+                        break;
+                    case 7:
+                        currentColor=(int)R.color.cl8;
+                        break;
+                    case 8:
+                        currentColor=(int)R.color.cl9;
+                        break;
+                    default:
+                        currentColor=(int)R.color.cl4;
+                }
+                myCanvas.setPenColor(currentColor);
+
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                //currentColor=0x000000;
+                //myCanvas.setPenColor(currentColor);
             }
         });
     }

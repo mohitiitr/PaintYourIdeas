@@ -44,6 +44,8 @@ public class MyCanvasView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        width=w;
+        height=h;
         mbitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mcanvas = new Canvas(mbitmap);
     }
@@ -87,8 +89,16 @@ public class MyCanvasView extends View {
     }
 
     public void clearCanvas(){
-         paths =new ArrayList<>();
-         invalidate();
+//         mpath.reset();
+//         invalidate();
+
+        for(PathCollector pc : paths){
+            pc.path.reset();
+        }
+        paths=new ArrayList<>();
+        invalidate();
+        mbitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        mcanvas = new Canvas(mbitmap);
     }
 
     private void upTouch(){
@@ -121,7 +131,7 @@ public class MyCanvasView extends View {
 
 
     public void setPenColor(int color){
-         mpaint.setColor(color);
+         mpaint.setColor(getResources().getColor(color));
     }
     public void setPenSize(float size){
          mpaint.setStrokeWidth(size);
