@@ -23,11 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private int eraserSize;
     private int currentColor;
 
-    private boolean isPenPressed=true;
-    private boolean isEraserPressed=false;
-
-    private int countBackPressed=0;
-    private boolean isOptionsVisible=true;
+    private boolean isOptionsVisible=false;
+    private boolean isPenSelected=true;
 
 
     String[] sizeNums={"1","2","3","4","5","6","7","8","9"};
@@ -46,10 +43,6 @@ public class MainActivity extends AppCompatActivity {
         PenButton=(Button)findViewById(R.id.penButton);
         EraserButton=(Button)findViewById(R.id.eraserButton);
         ClearAllButton=(Button)findViewById(R.id.clearAll);
-
-        final Toast toast=Toast.makeText(MainActivity.this,"Please select PEN Button before changing pen attributes \n:)",Toast.LENGTH_SHORT);
-        final Toast toast2=Toast.makeText(MainActivity.this,"Please select ERASER Button before changing ERASER size \n:)",Toast.LENGTH_SHORT);
-
 
         myCanvas=(MyCanvasView) findViewById(R.id.canvastodraw);
 
@@ -70,42 +63,33 @@ public class MainActivity extends AppCompatActivity {
         sizeSpinnerPen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if(isPenPressed){
                 penSize=position+1;
                 myCanvas.setPenSize((float)penSize*4);
-            }
-            else {
-                     toast.show();
-                }
 
             }
 
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                if (isPenPressed){penSize=16;
+                penSize=16;
                 myCanvas.setPenSize((float)penSize);
-            }
-            else toast.show();
+
             }
         });
+
+
 
         eraserSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-              if(isEraserPressed){  eraserSize=position+1;
-                myCanvas.setPenSize((float)eraserSize*5);
-            }
-              else if (countBackPressed>0)toast2.show();
+                eraserSize=position+1;
+                myCanvas.setPenSize(position*5);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                if(isEraserPressed){eraserSize=16;
+                eraserSize=16;
                 myCanvas.setPenSize((float)eraserSize);
-            }
-
             }
         });
 
@@ -114,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                if(isPenPressed){
                 switch (position){
                     case 0:
                         currentColor=(int)R.color.cl4;
@@ -148,10 +131,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 myCanvas.setPenColor(currentColor);}
 
-                else toast.show();
-
-
-            }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -174,19 +153,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void setPen(View view){
         //setting the pen doing later
+        isPenSelected=true;
         myCanvas.setPenSize(penSize*4);
         myCanvas.setPenColor(currentColor);
-        isPenPressed=true;
-        isEraserPressed=false;
+        sizeSpinnerPen.setVisibility(View.VISIBLE);
+        colorSpinner.setVisibility(View.VISIBLE);
+        eraserSpinner.setVisibility(View.GONE);
     }
 
     public void setEraser(View view){
         //setting eraser i will do later after the completion of spinner object
         myCanvas.setPenSize(eraserSize*5);
         myCanvas.setPenColor(R.color.White);
-        isPenPressed=false;
-        isEraserPressed=true;
-        countBackPressed++;
+        eraserSpinner.setVisibility(View.VISIBLE);
+        sizeSpinnerPen.setVisibility(View.GONE);
+        colorSpinner.setVisibility(View.GONE);
+        isPenSelected=false;
+
     }
 
     public void toolOptions(View view){
@@ -202,12 +185,15 @@ public class MainActivity extends AppCompatActivity {
 
         else {
             PenButton.setVisibility(View.VISIBLE);
-            sizeSpinnerPen.setVisibility(View.VISIBLE);
-            colorSpinner.setVisibility(View.VISIBLE);
             EraserButton.setVisibility(View.VISIBLE);
-            eraserSpinner.setVisibility(View.VISIBLE);
             ClearAllButton.setVisibility(View.VISIBLE);
             isOptionsVisible=true;
+
+            if(isPenSelected){
+                sizeSpinnerPen.setVisibility(View.VISIBLE);
+                colorSpinner.setVisibility(View.VISIBLE);
+            }
+            else eraserSpinner.setVisibility(View.VISIBLE);
 
         }
 
