@@ -10,6 +10,8 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+
 public class MyCanvasView extends View {
      public int width;
      public int height;
@@ -20,6 +22,8 @@ public class MyCanvasView extends View {
      private Paint mpaint;
      private float mX,mY;
      private static final float TOLERANCE=5;
+     private ArrayList<PathCollector> paths=new ArrayList<>();
+     private Paint mbtmppaint=new Paint(Paint.DITHER_FLAG);
 
 
 
@@ -46,11 +50,27 @@ public class MyCanvasView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawPath(mpath, mpaint);
+//        super.onDraw(canvas);
+//        canvas.drawPath(mpath, mpaint);
+
+        canvas.save();
+
+        for (PathCollector pc :paths){
+            mpaint.setColor(pc.colorOfPath);
+            mpaint.setStrokeWidth(pc.strokeWidthOfPath);
+            mcanvas.drawPath(pc.path,mpaint);
+        }
+        canvas.drawBitmap(mbitmap,0,0,mbtmppaint);
+        canvas.restore();
+
     }
 
     private void startTouch(float x, float y) {
+        mpath=new Path();
+
+        PathCollector pc= new PathCollector(mpaint.getColor(),mpaint.getStrokeWidth(),mpath);
+        paths.add(pc);
+
         mpath.moveTo(x, y);
         mX = x;
         mY = y;
@@ -67,7 +87,7 @@ public class MyCanvasView extends View {
     }
 
     public void clearCanvas(){
-         mpath.reset();
+         paths =new ArrayList<>();
          invalidate();
     }
 
