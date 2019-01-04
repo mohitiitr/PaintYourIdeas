@@ -3,8 +3,12 @@ package com.example.mohgpa.paintyourideas;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,6 +17,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,33 +35,35 @@ public class MainActivity extends AppCompatActivity {
     private int currentColor;//pen's current color
 
 
-    private boolean isOptionsVisible=false;
-    private boolean isPenSelected=true;
+    private boolean isOptionsVisible = false;
+    private boolean isPenSelected = true;
+
+    File dir = new File("/storage/emulated/0/Pictures/PaintYourIdeas/");
 
     AlertDialog.Builder builder;
-    String titleInstructions="Instructions";
-    String msgInstructions="Clicking on the \"Tools\" button will show you the pen and eraser options.\n" +
-            "\n"+"After selecting Pen button,drop down menus will appear you can choose pen's tip size and color from them.\n" +
+    String titleInstructions = "Instructions";
+    String msgInstructions = "Clicking on the \"Tools\" button will show you the pen and eraser options.\n" +
+            "\n" + "After selecting Pen button,drop down menus will appear you can choose pen's tip size and color from them.\n" +
             "Similarly for eraser you can change eraser size. \n" +
             "Clear all button will reset the complete canvas.\n\n" +
             "Clicking on tools will hide options .";
-    String titleAbout="About";
-    String msgAbout="Thanks for using \"Paint Your Ideas\".\n" +
-            "\n" +"Hope you enjoyed the app"+"\n"+
+    String titleAbout = "About";
+    String msgAbout = "Thanks for using \"Paint Your Ideas\".\n" +
+            "\n" + "Hope you enjoyed the app" + "\n" +
             "I am open for feedback ,for your feedback please mail me at \"mohitkumarbti@gamil.com\"" +
             "\n\n Current version: \n1.0.1\n \n I am continously working to make this a more wonder full app.\n" +
             "Stay tuned to my repo for future updates as this is not currently published";
 
 
-
-    String[] sizeNums={"1","2","3","4","5","6","7","8","9"};
-    String [] colorsRange={ "Black","Red","Orange","SkyBlue","LightGreen","DarkGreen","Yellow","Pink","DarkBlue"};
+    String[] sizeNums = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    String[] colorsRange = {"Black", "Red", "Orange", "SkyBlue", "LightGreen", "DarkGreen", "Yellow", "Pink", "DarkBlue"};
 
 
     Button PenButton;
     Button EraserButton;
     Button ClearAllButton;
     Button ToolsButton;
+    Button SaveButton;
 
     AlertDialog dialog;
 
@@ -61,9 +72,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        builder= new AlertDialog.Builder(MainActivity.this);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle(titleInstructions).setMessage(msgInstructions);
-        builder.setPositiveButton(R.string.ok,new DialogInterface.OnClickListener(){
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //just simply dismiss the dialog box
@@ -71,62 +86,60 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        dialog=builder.create();
+        dialog = builder.create();
         dialog.show();
 
-        PenButton=(Button)findViewById(R.id.penButton);
-        EraserButton=(Button)findViewById(R.id.eraserButton);
-        ClearAllButton=(Button)findViewById(R.id.clearAll);
-        ToolsButton=(Button)findViewById(R.id.tools);
+        PenButton = (Button) findViewById(R.id.penButton);
+        EraserButton = (Button) findViewById(R.id.eraserButton);
+        ClearAllButton = (Button) findViewById(R.id.clearAll);
+        ToolsButton = (Button) findViewById(R.id.tools);
+        SaveButton = (Button) findViewById(R.id.save);
 
-        myCanvas=(MyCanvasView) findViewById(R.id.canvastodraw);
-
-
-        sizeSpinnerPen=(Spinner)findViewById(R.id.sizeSpinner);
-        colorSpinner=(Spinner)findViewById(R.id.colorSpinner);
-        eraserSpinner=(Spinner)findViewById(R.id.sizeSpinnerForEraser);
+        myCanvas = (MyCanvasView) findViewById(R.id.canvastodraw);
 
 
+        sizeSpinnerPen = (Spinner) findViewById(R.id.sizeSpinner);
+        colorSpinner = (Spinner) findViewById(R.id.colorSpinner);
+        eraserSpinner = (Spinner) findViewById(R.id.sizeSpinnerForEraser);
 
-        final ArrayAdapter penSizeAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeNums);
+
+        final ArrayAdapter penSizeAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeNums);
         penSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
 
 
         sizeSpinnerPen.setAdapter(penSizeAdapter);
         eraserSpinner.setAdapter(penSizeAdapter);
-        colorSpinner.setAdapter( new MyAdapter(MainActivity.this,R.layout.my_custom_layout,colorsRange));
+        colorSpinner.setAdapter(new MyAdapter(MainActivity.this, R.layout.my_custom_layout, colorsRange));
 
         sizeSpinnerPen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                penSize=position+1;
-                myCanvas.setPenSize((float)penSize*4);
+                penSize = position + 1;
+                myCanvas.setPenSize((float) penSize * 4);
 
             }
 
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                penSize=16;
-                myCanvas.setPenSize((float)penSize);
+                penSize = 16;
+                myCanvas.setPenSize((float) penSize);
 
             }
         });
 
 
-
         eraserSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                eraserSize=position+1;
-                myCanvas.setPenSize((float)eraserSize*5);
+                eraserSize = position + 1;
+                myCanvas.setPenSize((float) eraserSize * 5);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                eraserSize=16;
-                myCanvas.setPenSize((float)eraserSize);
+                eraserSize = 16;
+                myCanvas.setPenSize((float) eraserSize);
             }
         });
 
@@ -135,38 +148,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                switch (position){
+                switch (position) {
                     case 0:
-                        currentColor=(int)R.color.cl4;
+                        currentColor = (int) R.color.cl4;
                         break;
                     case 1:
-                        currentColor=(int)R.color.cl1;
+                        currentColor = (int) R.color.cl1;
                         break;
                     case 2:
-                        currentColor=(int)R.color.cl2;
+                        currentColor = (int) R.color.cl2;
                         break;
                     case 3:
-                        currentColor=(int)R.color.cl3;
+                        currentColor = (int) R.color.cl3;
                         break;
                     case 4:
-                        currentColor=(int)R.color.cl6;
+                        currentColor = (int) R.color.cl6;
                         break;
                     case 5:
-                        currentColor=(int)R.color.cl5;
+                        currentColor = (int) R.color.cl5;
                         break;
                     case 6:
-                        currentColor=(int)R.color.cl7;
+                        currentColor = (int) R.color.cl7;
                         break;
                     case 7:
-                        currentColor=(int)R.color.cl8;
+                        currentColor = (int) R.color.cl8;
                         break;
                     case 8:
-                        currentColor=(int)R.color.cl9;
+                        currentColor = (int) R.color.cl9;
                         break;
                     default:
-                        currentColor=(int)R.color.cl4;
+                        currentColor = (int) R.color.cl4;
                 }
-                myCanvas.setPenColor(currentColor);}
+                myCanvas.setPenColor(currentColor);
+            }
 
 
             @Override
@@ -175,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 //myCanvas.setPenColor(currentColor);
             }
         });
-
 
 
     }//onCreate method finishes here
@@ -203,14 +216,14 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.about:
                 builder.setTitle(titleAbout).setMessage(msgAbout);
-                builder.setPositiveButton(R.string.ok,new DialogInterface.OnClickListener(){
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //just simply dismiss the dialog box
                         //its fun doing android
                     }
                 });
-                AlertDialog dialog2=builder.create();
+                AlertDialog dialog2 = builder.create();
                 dialog2.show();
                 return true;
             default:
@@ -219,65 +232,92 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-    public void clearTheCanvas(View view){
+    public void clearTheCanvas(View view) {
         myCanvas.clearCanvas();
     }
 
-    public void setPen(View view){
+    public void setPen(View view) {
         //setting the pen doing later
-        isPenSelected=true;
-        myCanvas.setPenSize(penSize*4);
+        isPenSelected = true;
+        myCanvas.setPenSize(penSize * 4);
         myCanvas.setPenColor(currentColor);
         sizeSpinnerPen.setVisibility(View.VISIBLE);
         colorSpinner.setVisibility(View.VISIBLE);
         eraserSpinner.setVisibility(View.GONE);
     }
 
-    public void setEraser(View view){
+    public void setEraser(View view) {
         //setting eraser i will do later after the completion of spinner object
-        myCanvas.setPenSize(eraserSize*5);
+        myCanvas.setPenSize(eraserSize * 5);
         myCanvas.setPenColor(R.color.White);
         eraserSpinner.setVisibility(View.VISIBLE);
         sizeSpinnerPen.setVisibility(View.GONE);
         colorSpinner.setVisibility(View.GONE);
-        isPenSelected=false;
+        isPenSelected = false;
 
     }
 
-    public void toolOptions(){
-        if (isOptionsVisible){
+    public void toolOptions() {
+        if (isOptionsVisible) {
             PenButton.setVisibility(View.GONE);
             sizeSpinnerPen.setVisibility(View.GONE);
             colorSpinner.setVisibility(View.GONE);
             EraserButton.setVisibility(View.GONE);
             eraserSpinner.setVisibility(View.GONE);
             ClearAllButton.setVisibility(View.GONE);
-            isOptionsVisible=false;
+            isOptionsVisible = false;
             ToolsButton.setVisibility(View.GONE);
-        }
-
-        else {
+            SaveButton.setVisibility(View.GONE);
+        } else {
             PenButton.setVisibility(View.VISIBLE);
             EraserButton.setVisibility(View.VISIBLE);
             ClearAllButton.setVisibility(View.VISIBLE);
-            isOptionsVisible=true;
+            SaveButton.setVisibility(View.VISIBLE);
+            isOptionsVisible = true;
             ToolsButton.setVisibility(View.VISIBLE);
 
-            if(isPenSelected){
+            if (isPenSelected) {
                 sizeSpinnerPen.setVisibility(View.VISIBLE);
                 colorSpinner.setVisibility(View.VISIBLE);
-            }
-            else eraserSpinner.setVisibility(View.VISIBLE);
+            } else eraserSpinner.setVisibility(View.VISIBLE);
 
         }
 
     }
 
-    public void toolOptions(View view){
-      toolOptions();
+    public void toolOptions(View view) {
+        toolOptions();
     }
+    //tools option method
+
+    public void saveFileMK(View view){
+        File toSave =new File(dir,"tempname."+"jpg");
+        OutputStream outputStream=null;
+
+        try{
+            outputStream=new FileOutputStream(toSave);
+            myCanvas.mbitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            MediaScannerConnection.scanFile(this, new String[] { toSave.toString() }, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.d("appname", "image is saved in gallery and gallery is refreshed.");
+                        }
+                    }
+            );
+        }
+
+        catch(Exception e){
+            String s=""+e;
+            Toast toast =Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }//file saved if possible to save the file
+
+
 }
+
+
+

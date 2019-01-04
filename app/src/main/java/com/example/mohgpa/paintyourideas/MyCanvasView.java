@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class MyCanvasView extends View {
      public int width;
      public int height;
-     private Bitmap mbitmap;
+     protected Bitmap mbitmap;
      private Canvas mcanvas;
      private Path mpath;
      Context context;
