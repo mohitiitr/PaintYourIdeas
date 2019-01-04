@@ -1,11 +1,16 @@
 package com.example.mohgpa.paintyourideas;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +30,8 @@ import java.io.OutputStream;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int REQUEST_WRITE_STORAGE = 112;
     Spinner sizeSpinnerPen;//to set size of pen
     Spinner colorSpinner;//to set color of pen
     private MyCanvasView myCanvas;//this is where drawing will take place
@@ -38,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isOptionsVisible = false;
     private boolean isPenSelected = true;
 
-    File dir = new File("/storage/emulated/0/Pictures/PaintYourIdeas/");
+    File dir ;
 
     AlertDialog.Builder builder;
     String titleInstructions = "Instructions";
@@ -72,8 +79,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!dir.exists()) {
-            dir.mkdirs();
+//        rootFolder=getExternalFilesDir();
+//        if (!rootFolder.exists()) rootFolder.mkdirs();
+//
+//        path=rootFolder.toString();
+//        dir=new File(path+"/Pictures/");
+//
+//
+//        if (!dir.exists()) {
+//            dir.mkdirs();
+//        }
+//        if (!dir.exists())dir.mkdir();
+        boolean hasPermission = (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_STORAGE);
         }
 
         builder = new AlertDialog.Builder(MainActivity.this);
@@ -193,6 +215,36 @@ public class MainActivity extends AppCompatActivity {
 
     }//onCreate method finishes here
 
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    public File getPublicAlbumStorageDir(String albumName) {
+
+//        File file = new File(Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_PICTURES), albumName);
+//        if (!file.mkdirs()) {
+//            Log.e("appname", "Directory not created");
+//            Log.e("appname",Environment.getExternalStoragePublicDirectory(
+//                    Environment.DIRECTORY_PICTURES).toString());
+//        }
+        String s=Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).toString();
+        File file=new File(s+"/"+albumName);
+        if(!file.exists()) file.mkdirs();
+        if (!file.exists())file.mkdir();
+        if (!file.exists()) {
+            Log.e("appname", "Directory not created");
+            Log.e("appname",file.toString());
+        }
+
+        return file;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -291,7 +343,18 @@ public class MainActivity extends AppCompatActivity {
     //tools option method
 
     public void saveFileMK(View view){
-        File toSave =new File(dir,"tempname."+"jpg");
+
+        if(isExternalStorageWritable()){
+            dir=getPublicAlbumStorageDir("PaintYourIdeas");
+        }
+        try{
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        if(!dir.exists())dir.mkdir();
+
+
+        File toSave =new File(dir.toString(),"tempname."+"jpg");
         OutputStream outputStream=null;
 
         try{
@@ -307,6 +370,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
             );
+
+
+            if(toSave.exists()){
+                Toast toast =Toast.makeText(MainActivity.this,"file saved"+"\n"+toSave.toString(),Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
 
         catch(Exception e){
@@ -314,7 +383,39 @@ public class MainActivity extends AppCompatActivity {
             Toast toast =Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
             toast.show();
         }
-    }//file saved if possible to save the file
+        //file saved if possible to save the file
+
+//        else {
+//            Toast toast=Toast.makeText(MainActivity.this,"Problem file can't created",Toast.LENGTH_SHORT);
+//            toast.show();
+//
+//        }//else statement
+        }//try statement
+        catch(Exception e){
+            String s=""+e;
+            Toast toast =Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode)
+        {
+            case REQUEST_WRITE_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    //reload my activity with permission granted or use the features what required the permission
+                } else
+                {
+                    Toast.makeText(MainActivity.this
+                            , "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
 
 
 }
