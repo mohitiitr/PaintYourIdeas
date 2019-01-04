@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/toolsMenuButton"
+          android:title="@string/tools"
+          app:showAsAction="ifRoom"
+        />
+    <item android:id="@+id/ins"
+          android:title="@string/instruction"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/about"
+          android:title="@string/abt"
+          app:showAsAction="never"/>
+</menu>

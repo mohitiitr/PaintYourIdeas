@@ -6,4 +6,7 @@
     <string name="Pen">PEN</string>
     <string name="Eraser">ERASER</string>
     <string name="tools">Tools</string>
+    <string name="abt">About</string>
+    <string name="instruction">Instructions</string>
+    <string name="ok">OK</string>
 </resources>
