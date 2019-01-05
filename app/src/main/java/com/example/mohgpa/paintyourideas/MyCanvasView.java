@@ -47,6 +47,8 @@ public class MyCanvasView extends View {
         width=w;
         height=h;
         mbitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mbitmap.eraseColor(getResources().getColor(R.color.White));
+//        mbitmap.setHasAlpha(true);
         mcanvas = new Canvas(mbitmap);
     }
 
@@ -89,15 +91,14 @@ public class MyCanvasView extends View {
     }
 
     public void clearCanvas(){
-//         mpath.reset();
-//         invalidate();
-
         for(PathCollector pc : paths){
             pc.path.reset();
         }
         paths=new ArrayList<>();
         invalidate();
         mbitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        mbitmap.eraseColor(getResources().getColor(R.color.White));
+//        mbitmap.setHasAlpha(true);
         mcanvas = new Canvas(mbitmap);
     }
 

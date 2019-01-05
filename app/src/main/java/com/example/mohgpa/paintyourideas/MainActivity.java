@@ -4,6 +4,7 @@ package com.example.mohgpa.paintyourideas;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
@@ -32,6 +33,11 @@ import java.io.OutputStream;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_WRITE_STORAGE = 112;
+
+    SharedPreferences sharedpreferences;
+    public static final String myPrefsName="mySharedPrefs";
+    public static final String numberImage="numberKey";
+
     Spinner sizeSpinnerPen;//to set size of pen
     Spinner colorSpinner;//to set color of pen
     private MyCanvasView myCanvas;//this is where drawing will take place
@@ -53,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
             "\n" + "After selecting Pen button,drop down menus will appear you can choose pen's tip size and color from them.\n" +
             "Similarly for eraser you can change eraser size. \n" +
             "Clear all button will reset the complete canvas.\n\n" +
-            "Clicking on tools will hide options .";
+            "Clicking on tools will hide options ." +
+            "\n Clicking on the save will save the image,also you can change the name of image.\n\n:)";
     String titleAbout = "About";
     String msgAbout = "Thanks for using \"Paint Your Ideas\".\n" +
             "\n" + "Hope you enjoyed the app" + "\n" +
@@ -79,17 +86,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        rootFolder=getExternalFilesDir();
-//        if (!rootFolder.exists()) rootFolder.mkdirs();
-//
-//        path=rootFolder.toString();
-//        dir=new File(path+"/Pictures/");
-//
-//
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//        }
-//        if (!dir.exists())dir.mkdir();
+        sharedpreferences=getSharedPreferences(myPrefsName,MODE_PRIVATE);
+
+
         boolean hasPermission = (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
         if (!hasPermission) {
@@ -109,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog = builder.create();
+
+
+
         dialog.show();
 
         PenButton = (Button) findViewById(R.id.penButton);
@@ -354,12 +356,13 @@ public class MainActivity extends AppCompatActivity {
         if(!dir.exists())dir.mkdir();
 
 
-        File toSave =new File(dir.toString(),"tempname."+"jpg");
+        File toSave =new File(dir.toString(),"tempname."+"png");
         OutputStream outputStream=null;
 
         try{
             outputStream=new FileOutputStream(toSave);
-            myCanvas.mbitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
+            myCanvas.mbitmap.setHasAlpha(false);
+            myCanvas.mbitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
             outputStream.flush();
             outputStream.close();
 
