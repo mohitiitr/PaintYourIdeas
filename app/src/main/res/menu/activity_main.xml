@@ -10,7 +10,11 @@
           android:title="@string/instruction"
           app:showAsAction="never"/>
 
+    <item android:id="@+id/dialogBoxSettings"
+          android:title="@string/ShowIns"
+        app:showAsAction="never"/>
     <item android:id="@+id/about"
           android:title="@string/abt"
           app:showAsAction="never"/>
+
 </menu>

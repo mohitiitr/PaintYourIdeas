@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedpreferences;
     public static final String myPrefsName="mySharedPrefs";
     public static final String numberImage="numberKey";
+    public static final String alwaysInstruction="dialogKey";
+    public static final String alwaysInstructionDialog="dialogSettingKey";
 
     Spinner sizeSpinnerPen;//to set size of pen
     Spinner colorSpinner;//to set color of pen
@@ -61,12 +63,18 @@ public class MainActivity extends AppCompatActivity {
             "Clear all button will reset the complete canvas.\n\n" +
             "Clicking on tools will hide options ." +
             "\n Clicking on the save will save the image,also you can change the name of image.\n\n:)";
+
+
+
     String titleAbout = "About";
     String msgAbout = "Thanks for using \"Paint Your Ideas\".\n" +
             "\n" + "Hope you enjoyed the app" + "\n" +
             "I am open for feedback ,for your feedback please mail me at \"mohitkumarbti@gamil.com\"" +
             "\n\n Current version: \n1.0.1\n \n I am continously working to make this a more wonder full app.\n" +
             "Stay tuned to my repo for future updates as this is not currently published";
+
+    String titleSettingInstruction="Pop Up Instructions";
+    String msgSettingInstructions="Do you want to recieve instructions every time when the app is launched ,press YES otherwise NO :)";
 
 
     String[] sizeNums = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
@@ -80,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     Button SaveButton;
 
     AlertDialog dialog;
+    AlertDialog dialog2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         sharedpreferences=getSharedPreferences(myPrefsName,MODE_PRIVATE);
 
 
+        //this demands for the permission to create files in the app so as to save the bitmaps into the storage of my mi note 4
         boolean hasPermission = (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
         if (!hasPermission) {
@@ -109,9 +119,30 @@ public class MainActivity extends AppCompatActivity {
 
         dialog = builder.create();
 
+        //this is to debug the case when the about is pressed after the pop up setting menu item
+
+        builder.setTitle(titleAbout).setMessage(msgAbout);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //just simply dismiss the dialog box
+                //its fun doing android
+            }
+        });
+        dialog2 = builder.create();
+
+        if (sharedpreferences.getBoolean(alwaysInstruction,true)){
+            dialog.show();
+        }
+
+        if (sharedpreferences.getBoolean(alwaysInstructionDialog,true)){
+            showAlwaysInstructionDialogBox();
+        }
 
 
-        dialog.show();
+
+
+
 
         PenButton = (Button) findViewById(R.id.penButton);
         EraserButton = (Button) findViewById(R.id.eraserButton);
@@ -268,16 +299,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.ins:
                 dialog.show();
                 return true;
+            case R.id.dialogBoxSettings:
+                showAlwaysInstructionDialogBox();
+                return true;
             case R.id.about:
-                builder.setTitle(titleAbout).setMessage(msgAbout);
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //just simply dismiss the dialog box
-                        //its fun doing android
-                    }
-                });
-                AlertDialog dialog2 = builder.create();
                 dialog2.show();
                 return true;
             default:
@@ -421,7 +446,33 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+    public void showAlwaysInstructionDialogBox(){
+
+        builder.setTitle(titleSettingInstruction);
+        builder.setMessage(msgSettingInstructions);
+        builder.setPositiveButton(R.string.y, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SharedPreferences.Editor editor=sharedpreferences.edit();
+                editor.putBoolean(alwaysInstruction,true);
+                editor.commit();
+            }
+        });
+        builder.setNegativeButton(R.string.n, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SharedPreferences.Editor editor=sharedpreferences.edit();
+                editor.putBoolean(alwaysInstruction,false);
+                editor.commit();
+            }
+        });
+        AlertDialog dialog3=builder.create();
+
+        dialog3.show();
+
+        SharedPreferences.Editor editor=sharedpreferences.edit();
+        editor.putBoolean(alwaysInstructionDialog,false);
+        editor.commit();
+    }
 }
-
-
-

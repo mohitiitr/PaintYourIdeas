@@ -10,4 +10,7 @@
     <string name="instruction">Instructions</string>
     <string name="ok">OK</string>
     <string name="sv">Save</string>
+    <string name="y">YES</string>
+    <string name="n">NO</string>
+    <string name="ShowIns">Pop Up Instructions</string>
 </resources>
