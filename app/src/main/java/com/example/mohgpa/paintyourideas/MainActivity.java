@@ -22,7 +22,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -96,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sharedpreferences=getSharedPreferences(myPrefsName,MODE_PRIVATE);
+
+        SharedPreferences.Editor editor=sharedpreferences.edit();
+        if (sharedpreferences.getInt(numberImage,-1)==-1){
+            editor.putInt(numberImage,0);
+            editor.commit();
+        }
 
 
         //this demands for the permission to create files in the app so as to save the bitmaps into the storage of my mi note 4
@@ -374,57 +383,92 @@ public class MainActivity extends AppCompatActivity {
         if(isExternalStorageWritable()){
             dir=getPublicAlbumStorageDir("PaintYourIdeas");
         }
-        try{
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        if(!dir.exists())dir.mkdir();
+        try {
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            if (!dir.exists()) dir.mkdir();
+
+            builder.setTitle("Save Your Amazing Idea");
+            builder.setMessage("Enter the file name below: (change the default name in the space below)");
+            final EditText input = new EditText(MainActivity.this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            builder.setView(input);
+
+            String defName="YourAwesomeIdea"+sharedpreferences.getInt(numberImage,0);
+            input.setText(defName,TextView.BufferType.EDITABLE);
 
 
-        File toSave =new File(dir.toString(),"tempname."+"png");
-        OutputStream outputStream=null;
-
-        try{
-            outputStream=new FileOutputStream(toSave);
-            myCanvas.mbitmap.setHasAlpha(false);
-            myCanvas.mbitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
-            outputStream.flush();
-            outputStream.close();
-
-            MediaScannerConnection.scanFile(this, new String[] { toSave.toString() }, null,
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        public void onScanCompleted(String path, Uri uri) {
-                            Log.d("appname", "image is saved in gallery and gallery is refreshed.");
-                        }
+            builder.setPositiveButton("Save the Idea", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String finalFileName=input.getText().toString();
+                    if ((finalFileName.substring(0,5)).equals("YourA")){
+                        SharedPreferences.Editor editor=sharedpreferences.edit();
+                        editor.putInt(numberImage,sharedpreferences.getInt(numberImage,0)+1);
+                        editor.apply();
                     }
-            );
+                    File toSave = new File(dir.toString(), finalFileName + ".png");
+                    OutputStream outputStream ;
+
+                    try {
+                        outputStream = new FileOutputStream(toSave);
+                        myCanvas.mbitmap.setHasAlpha(false);
+                        myCanvas.mbitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                        outputStream.flush();
+                        outputStream.close();
+
+                        MediaScannerConnection.scanFile(MainActivity.this, new String[]{toSave.toString()}, null,
+                                new MediaScannerConnection.OnScanCompletedListener() {
+                                    public void onScanCompleted(String path, Uri uri) {
+                                        Log.d("appname", "image is saved in gallery and gallery is refreshed.");
+                                    }
+                                }
+                        );
 
 
-            if(toSave.exists()){
-                Toast toast =Toast.makeText(MainActivity.this,"file saved"+"\n"+toSave.toString(),Toast.LENGTH_SHORT);
+                        if (toSave.exists()) {
+                            Toast toast = Toast.makeText(MainActivity.this, "file saved" + "\n" + toSave.toString(), Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    } catch (Exception e) {
+                        String s = "" + e;
+                        Toast toast = Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                    //file saved if possible to save the file
+
+                }//try statement
+
+            });
+            builder.setNegativeButton("Don't save ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //just simply dismiss the dialog
+                }
+            });
+
+            AlertDialog dialog4=builder.create();
+            dialog4.show();
+
+        }
+
+
+        catch(Exception e){
+                String s=""+e;
+                Toast toast =Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
                 toast.show();
             }
-        }
 
-        catch(Exception e){
-            String s=""+e;
-            Toast toast =Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
-            toast.show();
-        }
-        //file saved if possible to save the file
 
-//        else {
-//            Toast toast=Toast.makeText(MainActivity.this,"Problem file can't created",Toast.LENGTH_SHORT);
-//            toast.show();
-//
-//        }//else statement
-        }//try statement
-        catch(Exception e){
-            String s=""+e;
-            Toast toast =Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT);
-            toast.show();
-        }
-    }
+
+    }//method finished
+
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
