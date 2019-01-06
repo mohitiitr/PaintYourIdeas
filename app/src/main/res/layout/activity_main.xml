@@ -23,17 +23,18 @@
         android:layout_marginTop="10dp">
 
 
-        <Button
-            android:id="@+id/penButton"
+
+
+
+        <Spinner
+            android:id="@+id/colorSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:onClick="setPen"
-            android:text="@string/Pen"
-            android:padding="0dp"
-            android:layout_toStartOf="@id/tools"
-            android:layout_toLeftOf="@id/tools"
+            android:layout_toLeftOf="@+id/sizeSpinner"
+            android:layout_toStartOf="@id/sizeSpinner"
+            android:prompt="@string/clr"
             android:visibility="gone"/>
 
         <Spinner
@@ -47,46 +48,45 @@
             android:prompt="@string/size"
             android:visibility="gone"/>
 
-        <Spinner
-            android:id="@+id/colorSpinner"
+        <ImageButton
+            android:id="@+id/penButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/sizeSpinner"
-            android:layout_toStartOf="@id/sizeSpinner"
-            android:prompt="@string/clr"
+            android:layout_margin="10dp"
+            android:onClick="setPen"
+            android:text=""
+            android:src="@drawable/penbutton"
+            android:padding="0dp"
+            android:layout_alignParentTop="true"
+            android:background="?android:selectableItemBackground"
+            android:layout_alignParentRight="true"
             android:visibility="gone"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tools"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:text="@string/tools"
-            android:onClick="toolOptions"
-            android:visibility="gone"/>
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setEraser"
-            android:text="@string/Eraser"
+            android:text=""
             android:padding="0dp"
+            android:src="@drawable/eraserbutton"
             android:layout_alignParentRight="true"
             android:id="@+id/eraserButton"
-            android:layout_marginTop="5dp"
-            android:layout_below="@id/tools"
+            android:layout_margin="10dp"
+            android:layout_below="@id/penButton"
+            android:background="?android:selectableItemBackground"
             android:visibility="gone"/>
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:onClick="clearTheCanvas"
-            android:text="@string/clear"
+            android:text=""
+            android:src="@drawable/clearbutton"
             android:padding="0dp"
+            android:layout_margin="10dp"
             android:id="@+id/clearAll"
+            android:background="?android:selectableItemBackground"
             android:visibility="gone"/>
         <Spinner
             android:layout_width="wrap_content"

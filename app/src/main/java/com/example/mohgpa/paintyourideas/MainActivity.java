@@ -87,10 +87,9 @@ public class MainActivity extends AppCompatActivity {
     String[] colorsRange = {"Black", "Red", "Orange", "SkyBlue", "LightGreen", "DarkGreen", "Yellow", "Pink", "DarkBlue"};//array that stores colors name
 
     //buttons in activity_main.xml
-    Button PenButton;
-    Button EraserButton;
-    Button ClearAllButton;
-    Button ToolsButton;
+    ImageButton PenButton;
+    ImageButton EraserButton;
+    ImageButton ClearAllButton;
     ImageButton SaveButton;
 
     //dialogs used more than once
@@ -166,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
         PenButton =  findViewById(R.id.penButton);
         EraserButton =  findViewById(R.id.eraserButton);
         ClearAllButton = findViewById(R.id.clearAll);
-        ToolsButton = findViewById(R.id.tools);
         SaveButton =  findViewById(R.id.save);
 
         myCanvas =  findViewById(R.id.canvastodraw);
@@ -366,7 +364,6 @@ public class MainActivity extends AppCompatActivity {
             eraserSpinner.setVisibility(View.GONE);
             ClearAllButton.setVisibility(View.GONE);
             isOptionsVisible = false;
-            ToolsButton.setVisibility(View.GONE);
             SaveButton.setVisibility(View.GONE);
         } else {
             PenButton.setVisibility(View.VISIBLE);
@@ -374,7 +371,6 @@ public class MainActivity extends AppCompatActivity {
             ClearAllButton.setVisibility(View.VISIBLE);
             SaveButton.setVisibility(View.VISIBLE);
             isOptionsVisible = true;
-            ToolsButton.setVisibility(View.VISIBLE);
 
             if (isPenSelected) {
                 sizeSpinnerPen.setVisibility(View.VISIBLE);
@@ -385,10 +381,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void toolOptions(View view) {
-        toolOptions();
-    }
-    //tools option method
 
     public void saveFileMK(View view){
 
