@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     Button EraserButton;
     Button ClearAllButton;
     Button ToolsButton;
-    Button SaveButton;
+    ImageButton SaveButton;
 
     //dialogs used more than once
     AlertDialog dialog;

@@ -99,15 +99,18 @@
             android:layout_marginEnd="22dp"
             android:visibility="gone"/>
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/save"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:onClick="saveFileMK"
-            android:text="@string/sv"
-            android:visibility="gone"/>
+            android:text=""
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/savebutton"
+            android:visibility="gone"
+            android:layout_margin="10dp"/>
 
     </RelativeLayout>
 
