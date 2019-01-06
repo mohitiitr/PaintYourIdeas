@@ -35,13 +35,13 @@ import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_WRITE_STORAGE = 112;
+    private static final int REQUEST_WRITE_STORAGE = 112;//for getting storage permission ,,this acts a key code XD
 
     SharedPreferences sharedpreferences;
-    public static final String myPrefsName="mySharedPrefs";
-    public static final String numberImage="numberKey";
-    public static final String alwaysInstruction="dialogKey";
-    public static final String alwaysInstructionDialog="dialogSettingKey";
+    public static final String myPrefsName="mySharedPrefs";//my shared preferences file name
+    public static final String numberImage="numberKey";//stores the index at which the next idea is to be saved
+    public static final String alwaysInstruction="dialogKey";//saves whether user wants to receive instructions every time the app starts
+    public static final String alwaysInstructionDialog="dialogSettingKey";//helps in one time display of instructions always dialog
 
     Spinner sizeSpinnerPen;//to set size of pen
     Spinner colorSpinner;//to set color of pen
@@ -53,12 +53,14 @@ public class MainActivity extends AppCompatActivity {
     private int currentColor;//pen's current color
 
 
-    private boolean isOptionsVisible = false;
-    private boolean isPenSelected = true;
+    private boolean isOptionsVisible = false;//helps in full view mode
+    private boolean isPenSelected = true;//helps to decide pens property
 
-    File dir ;
+    File dir ;//directory where files will be saved
 
-    AlertDialog.Builder builder;
+    AlertDialog.Builder builder;//this creates dialog
+
+    //strings variable names are self explaining their purpose
     String titleInstructions = "Instructions";
     String msgInstructions = "Clicking on the \"Tools\" button will show you the pen and eraser options.\n" +
             "\n" + "After selecting Pen button,drop down menus will appear you can choose pen's tip size and color from them.\n" +
@@ -80,16 +82,17 @@ public class MainActivity extends AppCompatActivity {
     String msgSettingInstructions="Do you want to recieve instructions every time when the app is launched ,press YES otherwise NO :)";
 
 
-    String[] sizeNums = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-    String[] colorsRange = {"Black", "Red", "Orange", "SkyBlue", "LightGreen", "DarkGreen", "Yellow", "Pink", "DarkBlue"};
+    String[] sizeNums = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};//pen size array
+    String[] colorsRange = {"Black", "Red", "Orange", "SkyBlue", "LightGreen", "DarkGreen", "Yellow", "Pink", "DarkBlue"};//array that stores colors name
 
-
+    //buttons in activity_main.xml
     Button PenButton;
     Button EraserButton;
     Button ClearAllButton;
     Button ToolsButton;
     Button SaveButton;
 
+    //dialogs used more than once
     AlertDialog dialog;
     AlertDialog dialog2;
 
@@ -98,13 +101,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedpreferences=getSharedPreferences(myPrefsName,MODE_PRIVATE);
+        sharedpreferences=getSharedPreferences(myPrefsName,MODE_PRIVATE);//set's the shared preferences file
 
-        SharedPreferences.Editor editor=sharedpreferences.edit();
+        SharedPreferences.Editor editor=sharedpreferences.edit();//editor
         if (sharedpreferences.getInt(numberImage,-1)==-1){
             editor.putInt(numberImage,0);
-            editor.commit();
-        }
+            editor.apply();
+        }//this statement helps to initiallize the numberImage
 
 
         //this demands for the permission to create files in the app so as to save the bitmaps into the storage of my mi note 4
@@ -116,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
                     REQUEST_WRITE_STORAGE);
         }
 
-        builder = new AlertDialog.Builder(MainActivity.this);
+        builder = new AlertDialog.Builder(MainActivity.this);//this initializes the builder
+
+        //the dialog one is being setup below
         builder.setTitle(titleInstructions).setMessage(msgInstructions);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -129,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
         dialog = builder.create();
 
         //this is to debug the case when the about is pressed after the pop up setting menu item
-
+        //if this is not done then about contains an unusual NO button ,also I was shocked seeing that but it is
+        //now corrected after this builder setup
         builder.setTitle(titleAbout).setMessage(msgAbout);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -140,10 +146,13 @@ public class MainActivity extends AppCompatActivity {
         });
         dialog2 = builder.create();
 
+
+        //shows instructions if user wants to see instructions every time he opens the app
         if (sharedpreferences.getBoolean(alwaysInstruction,true)){
             dialog.show();
         }
 
+        //asks user for the instructions settings
         if (sharedpreferences.getBoolean(alwaysInstructionDialog,true)){
             showAlwaysInstructionDialogBox();
         }
@@ -151,23 +160,23 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        // i have removed the casting as android studio showed this as redundant
+
+        PenButton =  findViewById(R.id.penButton);
+        EraserButton =  findViewById(R.id.eraserButton);
+        ClearAllButton = findViewById(R.id.clearAll);
+        ToolsButton = findViewById(R.id.tools);
+        SaveButton =  findViewById(R.id.save);
+
+        myCanvas =  findViewById(R.id.canvastodraw);
 
 
-        PenButton = (Button) findViewById(R.id.penButton);
-        EraserButton = (Button) findViewById(R.id.eraserButton);
-        ClearAllButton = (Button) findViewById(R.id.clearAll);
-        ToolsButton = (Button) findViewById(R.id.tools);
-        SaveButton = (Button) findViewById(R.id.save);
-
-        myCanvas = (MyCanvasView) findViewById(R.id.canvastodraw);
+        sizeSpinnerPen =  findViewById(R.id.sizeSpinner);
+        colorSpinner =  findViewById(R.id.colorSpinner);
+        eraserSpinner =  findViewById(R.id.sizeSpinnerForEraser);
 
 
-        sizeSpinnerPen = (Spinner) findViewById(R.id.sizeSpinner);
-        colorSpinner = (Spinner) findViewById(R.id.colorSpinner);
-        eraserSpinner = (Spinner) findViewById(R.id.sizeSpinnerForEraser);
-
-
-        final ArrayAdapter penSizeAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeNums);
+        final ArrayAdapter penSizeAdapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_spinner_item, sizeNums);
         penSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
@@ -180,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 penSize = position + 1;
                 myCanvas.setPenSize((float) penSize * 4);
-
+                //this set's the pen size as per user selection
             }
 
 
@@ -188,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
                 penSize = 16;
                 myCanvas.setPenSize((float) penSize);
+                //some sort of default case is this
 
             }
         });
@@ -197,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 eraserSize = position + 1;
+                //stores eraser size in a variable to access the size any time needed
                 myCanvas.setPenSize((float) eraserSize * 5);
             }
 
@@ -214,36 +225,37 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (position) {
                     case 0:
-                        currentColor = (int) R.color.cl4;
+                        currentColor =  R.color.cl4;
                         break;
                     case 1:
-                        currentColor = (int) R.color.cl1;
+                        currentColor =  R.color.cl1;
                         break;
                     case 2:
-                        currentColor = (int) R.color.cl2;
+                        currentColor =  R.color.cl2;
                         break;
                     case 3:
-                        currentColor = (int) R.color.cl3;
+                        currentColor =  R.color.cl3;
                         break;
                     case 4:
-                        currentColor = (int) R.color.cl6;
+                        currentColor =  R.color.cl6;
                         break;
                     case 5:
-                        currentColor = (int) R.color.cl5;
+                        currentColor =  R.color.cl5;
                         break;
                     case 6:
-                        currentColor = (int) R.color.cl7;
+                        currentColor =  R.color.cl7;
                         break;
                     case 7:
-                        currentColor = (int) R.color.cl8;
+                        currentColor =  R.color.cl8;
                         break;
                     case 8:
-                        currentColor = (int) R.color.cl9;
+                        currentColor =  R.color.cl9;
                         break;
                     default:
-                        currentColor = (int) R.color.cl4;
+                        currentColor =  R.color.cl4;
                 }
-                myCanvas.setPenColor(currentColor);
+                myCanvas.setPenColor(currentColor);//my defined function ,view the My canvas view to see its details
+                //basically is a modified version of setColor(int color);
             }
 
 
@@ -259,10 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+       return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     public File getPublicAlbumStorageDir(String albumName) {
@@ -277,8 +286,10 @@ public class MainActivity extends AppCompatActivity {
         String s=Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES).toString();
         File file=new File(s+"/"+albumName);
-        if(!file.exists()) file.mkdirs();
-        if (!file.exists())file.mkdir();
+        if(!file.exists())
+            if (file.mkdirs())
+                file.mkdir();
+
         if (!file.exists()) {
             Log.e("appname", "Directory not created");
             Log.e("appname",file.toString());
@@ -385,9 +396,10 @@ public class MainActivity extends AppCompatActivity {
         }
         try {
             if (!dir.exists()) {
-                dir.mkdirs();
+              if (!dir.mkdirs())
+                  dir.mkdir();//ignor the result
             }
-            if (!dir.exists()) dir.mkdir();
+
 
             builder.setTitle("Save Your Amazing Idea");
             builder.setMessage("Enter the file name below: (change the default name in the space below)");
@@ -478,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    //reload my activity with permission granted or use the features what required the permission
+                    //this is left blank as if permission is granted ,user can save ideas easily there will be no  problem for him
                 } else
                 {
                     Toast.makeText(MainActivity.this
@@ -493,6 +505,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void showAlwaysInstructionDialogBox(){
 
+        //setting the dialog box for the always instruction prompts ,it was an amazing experience creating this dialog
+        //a lot of debug ,hhhhhhh!!
         builder.setTitle(titleSettingInstruction);
         builder.setMessage(msgSettingInstructions);
         builder.setPositiveButton(R.string.y, new DialogInterface.OnClickListener() {
@@ -500,7 +514,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 SharedPreferences.Editor editor=sharedpreferences.edit();
                 editor.putBoolean(alwaysInstruction,true);
-                editor.commit();
+                editor.apply();
             }
         });
         builder.setNegativeButton(R.string.n, new DialogInterface.OnClickListener() {
@@ -508,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 SharedPreferences.Editor editor=sharedpreferences.edit();
                 editor.putBoolean(alwaysInstruction,false);
-                editor.commit();
+                editor.apply();
             }
         });
         AlertDialog dialog3=builder.create();
@@ -517,6 +531,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences.Editor editor=sharedpreferences.edit();
         editor.putBoolean(alwaysInstructionDialog,false);
-        editor.commit();
+        editor.apply();
     }
 }
