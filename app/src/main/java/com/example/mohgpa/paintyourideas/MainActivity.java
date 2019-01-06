@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     String titleAbout = "About";
     String msgAbout = "Thanks for using \"Paint Your Ideas\".\n" +
             "\n" + "Hope you enjoyed the app" + "\n" +
+            "\n A great thanks to www.flaticom.com and www.freepick.com for providing images to be used as buttons in the app\n"+
             "I am open for feedback ,for your feedback please mail me at \"mohitkumarbti@gamil.com\"" +
             "\n\n Current version: \n1.0.1\n \n I am continously working to make this a more wonder full app.\n" +
             "Stay tuned to my repo for future updates as this is not currently published";
