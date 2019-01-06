@@ -3,3 +3,10 @@ Description :
 This is a android app,which allows user to create drawings on canvas ,users can save thier drawing as well ,
 in their mobile /tablet devices .
 It is pretty handy to use ,users will learn to use it in a go .
+You can currently draw in 9 colors (after you click pen icon (after tools) you can choose color). 
+Pen can have nine different sizes. Eraser has also nine different sizes.
+(remember that size of eraser is larger that pen at same (index) level).
+Dustbin button clears all the drawing you made. 
+Save button(floppy image) helps you save the image in your phone.
+
+Don't forget to give me feedback @ my mail, mohitkumarbti0164@gmail.com
